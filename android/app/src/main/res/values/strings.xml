@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Quiet Calculator</string>
+    <string name="title_activity_main">Quiet Calculator</string>
+    <string name="package_name">com.claire.quietcalculator</string>
+    <string name="custom_url_scheme">com.claire.quietcalculator</string>
+</resources>

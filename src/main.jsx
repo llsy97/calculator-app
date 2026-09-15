@@ -1,0 +1,10 @@
+import { Capacitor } from '@capacitor/core';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App.jsx';
+import '@fontsource/poppins/latin-300.css';
+import '@fontsource/poppins/latin-400.css';
+import '@fontsource/poppins/latin-500.css';
+import './styles.css';
+if (Capacitor.isNativePlatform()) document.documentElement.classList.add('native-app');
+createRoot(document.getElementById('root')).render(<App />);

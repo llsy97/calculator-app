@@ -1,0 +1,6 @@
+{
+  "appId": "com.claire.quietcalculator",
+  "appName": "Quiet Calculator",
+  "webDir": "dist",
+  "backgroundColor": "#42546e"
+}
