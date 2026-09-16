@@ -43,7 +43,7 @@ output { display: block; max-width: 100%; overflow-x: auto; white-space: nowrap;
 .key:active { transform: translateY(2px); box-shadow: inset 0 2px 4px #0003; }
 button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--muted); outline-offset: 3px; }
 .display input:focus { outline: none; border: 0; box-shadow: none; }
-.display input:focus-visible { box-shadow: 0 1px 0 var(--muted); }
+.display input:focus-visible { outline: none; border: 0; box-shadow: none; }
 .drawer-tab { position: absolute; left: 0; top: 126px; height: 160px; width: 13px; padding: 0; border: 1px solid var(--line); border-left: 0; border-radius: 0 5px 5px 0; background: transparent; color: var(--muted); }
 .history { position: absolute; inset: 91px auto 0 0; width: min(265px, 90%); background: var(--surface); box-shadow: 6px 0 18px #0003; border-right: 1px solid var(--line); display: flex; flex-direction: column; padding: 16px; z-index: 2; }
 .history-header { display: flex; align-items: center; justify-content: space-between; }
@@ -216,3 +216,62 @@ html.native-app .caption, html.native-app .hint { display: none; }
 .expanded .converter .use-conversion { font-size: 11px; }
 .page:has(.expanded) { padding-top: max(8px, env(safe-area-inset-top)); padding-bottom: max(8px, env(safe-area-inset-bottom)); }
 .app-wrap:has(.expanded) > .caption, .app-wrap:has(.expanded) > .hint { display: none; }
+
+/* Three scientific rows keep the full keypad visible on portrait phones. */
+.scientific.expanded header { height: 36px; }
+.scientific.expanded .mode-row { height: 28px; min-height: 28px; }
+.scientific.expanded .display-region .display { min-height: 78px; }
+.scientific.expanded .standard-grid { gap: 7px 10px; }
+.scientific.expanded .standard-grid .key { height: clamp(44px, 6.5svh, 52px); }
+.scientific.expanded .toolbar { margin-bottom: 5px; }
+.secondary-toggle[aria-pressed="true"] { color: #fff; background: #26364d; }
+@media (max-height: 620px) {
+  .scientific.expanded { padding-top: 4px; padding-bottom: 8px; }
+  .scientific.expanded .standard-grid .key { height: 44px; }
+  .scientific.expanded .standard-grid { gap: 5px 10px; }
+  .scientific.expanded .keyboards { gap: 5px; }
+}
+
+/* Reference layout: one aligned four-column keypad with a flexible display. */
+.scientific.expanded .science-grid,
+html.native-app .scientific.expanded .science-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px 10px;
+}
+.scientific.expanded .mode-row { display: none; }
+.scientific.expanded .science-grid .key { font-size: 14px; }
+@media (max-width: 560px) and (min-height: 600px) {
+  .page:has(.scientific) {
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    background: var(--surface);
+  }
+  .app-wrap:has(.scientific), html.native-app .app-wrap:has(.scientific) {
+    width: 100%; max-width: 420px;
+  }
+  .scientific.expanded {
+    height: calc(100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    display: flex; flex-direction: column;
+    padding: 8px 22px 14px; border-radius: 0; box-shadow: none;
+  }
+  .scientific.expanded header { flex: 0 0 44px; }
+  .scientific.expanded .display-region {
+    flex: 1 1 auto; min-height: 64px; margin-left: -22px; padding-left: 22px;
+  }
+  .scientific.expanded .display-region .display {
+    min-height: 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .scientific.expanded .display input { font-size: 18px; }
+  .scientific.expanded output { font-size: 34px; }
+  .scientific.expanded .error { min-height: 18px; font-size: 10px; }
+  .scientific.expanded .toolbar { flex: 0 0 44px; margin: 0 0 8px; }
+  .scientific.expanded .keyboards, html.native-app .scientific.expanded .keyboards {
+    flex: 0 0 auto; gap: 8px;
+  }
+  .scientific.expanded .science-grid, html.native-app .scientific.expanded .science-grid {
+    flex: none; padding-bottom: 0; border-bottom: 0;
+  }
+  .scientific.expanded .standard-grid { flex: none; gap: 5px 10px; }
+  .scientific.expanded .standard-grid .key {
+    height: clamp(44px, 6.3svh, 56px);
+  }
+}

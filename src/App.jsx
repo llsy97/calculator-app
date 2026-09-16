@@ -13,12 +13,13 @@ function useSaved(key, fallback) {
 function Key({ children, onClick, kind = '', label }) {
   return <button className={`key ${kind}`} onClick={onClick} aria-label={label || String(children)}>{children}</button>;
 }
-const scientificKeys = [
-  ['(', '('], [')', ')'], ['x²', '^2'], ['xʸ', '^'],
-  ['√', 'sqrt('], ['1/x', 'reciprocal'], ['|x|', 'abs('], ['n!', '!'],
-  ['sin', 'sin('], ['cos', 'cos('], ['tan', 'tan('], ['π', 'π'],
-  ['asin', 'asin('], ['acos', 'acos('], ['atan', 'atan('], ['e', 'e'],
-  ['log₁₀', 'log('], ['ln', 'ln('], ['10ˣ', '10^('], ['eˣ', 'e^('],
+const scientificPages = [
+  [['(', '('], [')', ')'], ['x²', '^2'], ['xʸ', '^'],
+   ['√', 'sqrt('], ['1/x', 'reciprocal'], ['sin', 'sin('], ['cos', 'cos('],
+   ['tan', 'tan('], ['π', 'π'], ['log₁₀', 'log('], ['ln', 'ln('], ['e', 'e']],
+  [['(', '('], [')', ')'], ['|x|', 'abs('], ['n!', '!'],
+   ['10ˣ', '10^('], ['eˣ', 'e^('], ['asin', 'asin('], ['acos', 'acos('],
+   ['atan', 'atan('], ['π', 'π'], ['xʸ', '^'], ['√', 'sqrt('], ['e', 'e']],
 ];
 export default function App() {
   const [language, setLanguage] = useState(() => navigator.languages?.[0] || navigator.language || 'en');
@@ -35,6 +36,7 @@ export default function App() {
   };
   const [theme, setTheme] = useSaved('calculator.theme', 'dark');
   const [mode, setMode] = useSaved('calculator.mode', 'Standard');
+  const [secondary, setSecondary] = useState(false);
   const [angle, setAngle] = useSaved('calculator.angle', 'DEG');
   const [history, setHistory] = useSaved('calculator.history', []);
   const [expression, setExpression] = useState('');
@@ -116,7 +118,7 @@ export default function App() {
         <nav className="toolbar" aria-label="Calculator utilities"><button aria-label={korean ? "단위 변환" : "Unit converter"} aria-expanded={converterOpen} aria-controls="unit-converter" onClick={() => { setConverterOpen(!converterOpen); setMode('Standard'); setDrawer(false); }}><Icon name="ruler" /></button><button className="scientific-toggle" aria-label="Scientific mode" title={mode === 'Scientific' ? 'Switch to Standard' : 'Switch to Scientific'} aria-pressed={mode === 'Scientific'} onClick={() => { setMode(mode === 'Scientific' ? 'Standard' : 'Scientific'); setConverterOpen(false); }}><Icon name="scientific" /></button><button className="copy-button" data-copied={copyStatus === labels.copied} aria-label="Copy result" onClick={copy}><Icon name="copy" /></button><span role="status">{copyStatus}</span><button aria-label="Backspace" onClick={backspace}><Icon name="backspace" /></button></nav>
         <div hidden={!converterOpen}><UnitConverter value={converterValue} onChange={setConverterValue} korean={korean} onUse={value => { reuse(value); setConverterOpen(false); }} /></div>
         <div className="keyboards">
-          {mode === 'Scientific' && <div className="science-grid"><Key kind="science" onClick={() => input('ANS')} label="Insert last answer">ANS</Key>{scientificKeys.map(([label, token]) => <Key key={label} kind="science" onClick={() => input(token)}>{label}</Key>)}</div>}
+          {mode === 'Scientific' && <div className="science-grid"><button className="key science secondary-toggle" aria-label={korean ? "보조 함수" : "Secondary functions"} aria-pressed={secondary} onClick={() => setSecondary(!secondary)}>2nd</button><button className="key science angle-toggle" aria-label={korean ? '각도 단위 전환' : 'Toggle angle unit'} onClick={() => setAngle(angle === 'DEG' ? 'RAD' : 'DEG')}>{angle}</button><Key kind="science" onClick={() => input('ANS')} label="Insert last answer">ANS</Key>{scientificPages[secondary ? 1 : 0].map(([label, token]) => <Key key={label} kind="science" onClick={() => input(token)}>{label}</Key>)}</div>}
           <div className="standard-grid"><Key kind="utility" onClick={clear} label="All clear">AC</Key><Key kind="utility" onClick={() => input('sign')} label="Toggle sign">+/−</Key><Key kind="utility" onClick={() => input('%')} label="Percent">%</Key><Key kind="operator" onClick={() => input('÷')} label="Divide">÷</Key>
           {['7', '8', '9', '×', '4', '5', '6', '−', '1', '2', '3', '+'].map(key => <Key key={key} kind={'×−+'.includes(key) ? 'operator' : ''} onClick={() => input(key)}>{key}</Key>)}
           <Key kind="zero" onClick={() => input('0')}>0</Key><Key onClick={() => input('.') } label="Decimal point">.</Key><Key kind="operator" onClick={calculate} label="Equals">=</Key></div>
