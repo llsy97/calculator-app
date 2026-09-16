@@ -275,3 +275,43 @@ html.native-app .scientific.expanded .science-grid {
     height: clamp(44px, 6.3svh, 56px);
   }
 }
+
+/* Standard mode uses the same edge-to-edge phone surface as Scientific. */
+@media (max-width: 560px) {
+  .page:has(.calculator:not(.scientific)) {
+    min-height: 100svh;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    background: var(--surface);
+  }
+  .app-wrap:has(.calculator:not(.scientific)),
+  html.native-app .app-wrap:has(.calculator:not(.scientific)) {
+    width: 100%; max-width: 420px;
+  }
+  .app-wrap:has(.calculator:not(.scientific)) > .caption,
+  .app-wrap:has(.calculator:not(.scientific)) > .hint { display: none; }
+  .calculator:not(.scientific) {
+    min-height: calc(100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    display: flex; flex-direction: column;
+    padding: 8px 22px 18px; border-radius: 0; box-shadow: none;
+  }
+  .calculator:not(.scientific) header { flex: 0 0 44px; margin: 0; }
+  .calculator:not(.scientific) .mode-row { display: none; }
+  .calculator:not(.scientific) .display-region {
+    flex: 1 0 120px; display: flex; flex-direction: column;
+    margin-left: -22px; padding-left: 22px;
+  }
+  .calculator:not(.scientific) .display-region .display {
+    flex: 1; min-height: 0; padding-top: 12px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .calculator:not(.scientific) .display input { font-size: 18px; }
+  .calculator:not(.scientific) .toolbar { flex: 0 0 44px; margin: 0 0 14px; }
+  .calculator:not(.scientific) .keyboards { flex: 0 0 auto; }
+  .calculator:not(.scientific) .standard-grid { flex: none; width: 100%; gap: 12px 14px; }
+  .calculator:not(.scientific) .standard-grid .key {
+    aspect-ratio: auto; height: clamp(44px, 8svh, 70px); border-radius: 40px;
+  }
+  .calculator.expanded:not(.scientific) .display-region { flex-basis: 84px; }
+  .calculator.expanded:not(.scientific) .standard-grid { gap: 6px 14px; }
+  .calculator.expanded:not(.scientific) .standard-grid .key { height: 44px; }
+}
