@@ -42,6 +42,8 @@ output { display: block; max-width: 100%; overflow-x: auto; white-space: nowrap;
 .key:hover { filter: brightness(1.07); }
 .key:active { transform: translateY(2px); box-shadow: inset 0 2px 4px #0003; }
 button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--muted); outline-offset: 3px; }
+.display input:focus { outline: none; border: 0; box-shadow: none; }
+.display input:focus-visible { box-shadow: 0 1px 0 var(--muted); }
 .drawer-tab { position: absolute; left: 0; top: 126px; height: 160px; width: 13px; padding: 0; border: 1px solid var(--line); border-left: 0; border-radius: 0 5px 5px 0; background: transparent; color: var(--muted); }
 .history { position: absolute; inset: 91px auto 0 0; width: min(265px, 90%); background: var(--surface); box-shadow: 6px 0 18px #0003; border-right: 1px solid var(--line); display: flex; flex-direction: column; padding: 16px; z-index: 2; }
 .history-header { display: flex; align-items: center; justify-content: space-between; }
@@ -133,6 +135,19 @@ html.native-app .caption, html.native-app .hint { display: none; }
   background: transparent; box-shadow: none; transform: none; transition: none;
 }
 .scientific-toggle[aria-pressed="true"] .icon-scientific { background-color: #26364d; }
+.icon-ruler {
+  background-color: #8595ac;
+  mask: url('/design/image4_40038_718.png') center / contain no-repeat;
+  -webkit-mask: url('/design/image4_40038_718.png') center / contain no-repeat;
+}
+.toolbar button[aria-controls="unit-converter"],
+.toolbar button[aria-controls="unit-converter"]:hover,
+.toolbar button[aria-controls="unit-converter"]:active {
+  background: transparent; box-shadow: none; transform: none; transition: none;
+}
+.toolbar button[aria-controls="unit-converter"][aria-expanded="true"] .icon-ruler {
+  background-color: #26364d;
+}
 .display-region { position: relative; margin-left: -25px; padding-left: 25px; }
 .display-region .display { min-height: 178px; }
 .history-open .display { padding-left: 43%; }
@@ -164,3 +179,40 @@ html.native-app .caption, html.native-app .hint { display: none; }
 .converter button { min-height: 44px; border: 1px solid var(--line); border-radius: 8px; background: transparent; color: var(--text); }
 .converter output { font-size: 24px; letter-spacing: 0; text-align: right; }
 .converter button:disabled { opacity: .4; cursor: default; }
+
+.icon-copy {
+  background-color: #8595ac;
+  mask: url('/design/image6_40038_718.png') center / contain no-repeat;
+  -webkit-mask: url('/design/image6_40038_718.png') center / contain no-repeat;
+}
+.toolbar .copy-button, .toolbar .copy-button:hover, .toolbar .copy-button:active {
+  background: transparent; box-shadow: none; transform: none; transition: none;
+}
+.copy-button:active .icon-copy, .copy-button[data-copied="true"] .icon-copy { background-color: #26364d; }
+/* Keep the additional tools above the shared numeric keypad. */
+.app-wrap:has(.expanded), html.native-app .app-wrap { width: min(100%, 344px); }
+.expanded .keyboards, html.native-app .expanded .keyboards { flex-direction: column; gap: 10px; }
+.expanded { padding-top: 8px; padding-bottom: 16px; }
+.expanded header { margin-bottom: 0; }
+.expanded .mode-row { min-height: 28px; }
+.expanded .display-region .display { min-height: 94px; padding-top: 0; }
+.expanded output { font-size: 28px; }
+.expanded .error { min-height: 20px; padding-top: 0; }
+.expanded .toolbar { margin: 0 0 8px; padding-bottom: 0; }
+.expanded .standard-grid { gap: 9px 10px; }
+.expanded .standard-grid .key { aspect-ratio: auto; height: clamp(44px, 6.8svh, 55px); border-radius: 28px; }
+.expanded .science-grid, html.native-app .expanded .science-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; padding-bottom: 8px;
+}
+.expanded .science-grid .key, html.native-app .expanded .science-grid .key {
+  min-width: 0; min-height: 44px; height: 44px; aspect-ratio: auto;
+  border-radius: 23px; font-size: 12px;
+}
+.expanded .science-grid > .key:first-child { grid-column: auto; }
+.expanded .converter { grid-template-columns: 1fr 1fr; gap: 6px 10px; padding: 0 0 10px; }
+.converter .conversion-units { grid-column: 1 / -1; }
+.expanded .converter label { font-size: 10px; gap: 1px; }
+.expanded .converter output { align-self: center; font-size: 19px; }
+.expanded .converter .use-conversion { font-size: 11px; }
+.page:has(.expanded) { padding-top: max(8px, env(safe-area-inset-top)); padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+.app-wrap:has(.expanded) > .caption, .app-wrap:has(.expanded) > .hint { display: none; }
