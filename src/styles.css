@@ -324,26 +324,12 @@ html.native-app .scientific.expanded .science-grid {
 .calculator .toolbar,
 .calculator.expanded .toolbar,
 .calculator:not(.scientific) .toolbar {
-  flex-basis: 49px;
-  min-height: 49px;
-  padding-bottom: 4px;
-  margin-top: 4px;
+  flex-basis: 53px;
+  min-height: 53px;
+  padding-bottom: 8px;
+  margin-top: 0;
   margin-bottom: 12px;
 }
 @media (max-width: 560px) {
-  .calculator:not(.scientific):not(.expanded) {
-    padding-bottom: clamp(30px, 6svh, 52px);
-  }
   .calculator:not(.scientific):not(.expanded) .toolbar { margin-bottom: 18px; }
-  .calculator:not(.scientific):not(.expanded) .standard-grid { row-gap: 16px; }
-  .scientific.expanded .science-grid,
-  html.native-app .scientific.expanded .science-grid,
-  .scientific.expanded .standard-grid { row-gap: 7px; }
-}
-@media (max-width: 560px) and (min-height: 700px) {
-  .scientific.expanded .science-grid,
-  html.native-app .scientific.expanded .science-grid,
-  .scientific.expanded .standard-grid { row-gap: 9px; }
-  .scientific.expanded .keyboards,
-  html.native-app .scientific.expanded .keyboards { gap: 12px; }
 }
