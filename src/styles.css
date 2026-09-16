@@ -120,8 +120,8 @@ html.native-app .caption, html.native-app .hint { display: none; }
 .science-grid > .key:first-child { grid-column: 1 / -1; aspect-ratio: auto; min-height: 44px; border-radius: 24px; }
 
 /* Fixed theme positions; only the artwork color changes. */
-.theme-toggle, .light .theme-toggle { min-width: 60px; }
-.theme-toggle .theme-track { width: 60px; height: 28px; padding: 4px 8px; }
+.theme-toggle, .light .theme-toggle { min-width: 76px; }
+.theme-toggle .theme-track { width: 76px; height: 28px; padding: 4px 10px; gap: 20px; }
 .theme-track .icon { width: 18px; height: 18px; }
 .icon-scientific {
   background-color: #8595ac;
@@ -314,4 +314,36 @@ html.native-app .scientific.expanded .science-grid {
   .calculator.expanded:not(.scientific) .display-region { flex-basis: 84px; }
   .calculator.expanded:not(.scientific) .standard-grid { gap: 6px 14px; }
   .calculator.expanded:not(.scientific) .standard-grid .key { height: 44px; }
+}
+
+/* A shallow press keeps keys clear of the row below. */
+.key:active, .light .key:active {
+  transform: translateY(1px);
+  box-shadow: -2px 2px 4px #00000026, inset 0 1px 2px #00000012;
+}
+.calculator .toolbar,
+.calculator.expanded .toolbar,
+.calculator:not(.scientific) .toolbar {
+  flex-basis: 49px;
+  min-height: 49px;
+  padding-bottom: 4px;
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
+@media (max-width: 560px) {
+  .calculator:not(.scientific):not(.expanded) {
+    padding-bottom: clamp(30px, 6svh, 52px);
+  }
+  .calculator:not(.scientific):not(.expanded) .toolbar { margin-bottom: 18px; }
+  .calculator:not(.scientific):not(.expanded) .standard-grid { row-gap: 16px; }
+  .scientific.expanded .science-grid,
+  html.native-app .scientific.expanded .science-grid,
+  .scientific.expanded .standard-grid { row-gap: 7px; }
+}
+@media (max-width: 560px) and (min-height: 700px) {
+  .scientific.expanded .science-grid,
+  html.native-app .scientific.expanded .science-grid,
+  .scientific.expanded .standard-grid { row-gap: 9px; }
+  .scientific.expanded .keyboards,
+  html.native-app .scientific.expanded .keyboards { gap: 12px; }
 }
