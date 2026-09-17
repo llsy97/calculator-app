@@ -89,7 +89,7 @@ h2 { margin: 0; font-size: 14px; font-weight: 500; }
 }
 
 /* Colors and two opposing shadows sampled from components.svg. */
-.page { --key: #8a7c6f; --utility: #aab4bb; }
+.page { --key: #9a8c7f; --utility: #aab4bb; }
 .page.light { --key: #f5f6f8; --utility: #ac9586; }
 .key.operator { background: #e7584a; }
 .key { box-shadow: -8px 8px 10px #0006, 6px -6px 10px #c1c1c140; }
@@ -332,4 +332,59 @@ html.native-app .scientific.expanded .science-grid {
 }
 @media (max-width: 560px) {
   .calculator:not(.scientific):not(.expanded) .toolbar { margin-bottom: 18px; }
+}
+
+/* Larger type without increasing keypad rows or button dimensions. */
+.calculator .display-region .display input {
+  font-size: 24px;
+  line-height: 1.2;
+  min-width: 0;
+}
+.calculator .display-region .display output {
+  font-size: 48px;
+  line-height: 1.35;
+  letter-spacing: -1px;
+  min-height: 1.35em;
+  flex-shrink: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+.calculator .display-region .display output::-webkit-scrollbar { display: none; }
+.toolbar button[aria-label="Backspace"],
+.toolbar button[aria-label="Backspace"]:hover,
+.toolbar button[aria-label="Backspace"]:active {
+  background: transparent;
+  color: var(--muted);
+  box-shadow: none;
+  transform: none;
+  filter: none;
+  transition: none;
+}
+.calculator.expanded .display-region .display input { font-size: 22px; }
+.calculator.expanded .display-region .display output { font-size: 42px; }
+.calculator .standard-grid .key { font-size: 28px; line-height: 1; }
+.calculator .standard-grid .key.utility { font-size: 20px; }
+.calculator .standard-grid .key.operator { font-size: 30px; }
+.calculator.scientific.expanded .science-grid .key,
+html.native-app .calculator.scientific.expanded .science-grid .key {
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 2px;
+}
+
+/* Reserve room for larger results and separate the theme switch from input. */
+.calculator.scientific.expanded header { margin-bottom: 12px; }
+.calculator.scientific.expanded .display-region .display {
+  min-height: 128px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.calculator.scientific.expanded .display-region .display input { flex-shrink: 0; }
+@media (max-width: 560px) and (min-height: 600px) {
+  .calculator.scientific.expanded .display-region { min-height: 128px; }
+  .calculator.scientific.expanded .display-region .display { min-height: 0; }
+  .calculator.scientific.expanded .standard-grid .key {
+    height: clamp(44px, 5.7svh, 50px);
+  }
 }
