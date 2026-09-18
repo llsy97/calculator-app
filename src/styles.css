@@ -388,3 +388,23 @@ html.native-app .calculator.scientific.expanded .science-grid .key {
     height: clamp(44px, 5.7svh, 50px);
   }
 }
+
+/* Original slim tab, with a larger arrow glyph. */
+.display-region .drawer-tab { width: 13px; font-size: 24px; line-height: 1; }
+.history-open .drawer-tab { left: calc(43% - 13px); }
+.history-entry { padding: 8px 0; gap: 4px; }
+.history-entry span { font-size: 14px; line-height: 1.4; }
+.history-entry strong { font-size: 24px; line-height: 1.3; font-weight: 400; }
+.history-list p { font-size: 13px; }
+.clear-history { font-size: 12px; min-height: 44px; }
+.calculator .display-region .display input { font-size: 28px; }
+.calculator .display-region .display output { font-size: 54px; }
+.calculator.expanded .display-region .display input { font-size: 26px; }
+.calculator.expanded .display-region .display output { font-size: 48px; }
+.calculator .standard-grid .key { font-size: 32px; }
+.calculator .standard-grid .key.utility { font-size: 22px; }
+.calculator .standard-grid .key.operator { font-size: 34px; }
+.calculator.scientific.expanded .science-grid .key,
+html.native-app .calculator.scientific.expanded .science-grid .key { font-size: 17px; }
+.calculator .converter input, .calculator .converter select { font-size: 18px; }
+.calculator .converter output { font-size: 26px; }
