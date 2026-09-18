@@ -6,6 +6,19 @@ export function formatResult(value) {
   if (Object.is(value, -0)) return '0';
   return Number(value.toPrecision(12)).toString();
 }
+// Preview never commits an answer or history entry. null means not yet valid.
+export function previewExpression(expression, angle = 'DEG', ans = 0) {
+  if (!expression.trim()) return 0;
+  try { return evaluate(expression, angle, ans); }
+  catch {
+    // A trailing operator is waiting for its operand: show the value before it.
+    // Keep actual evaluation strict, and do not treat an unfinished exponent as e.
+    const pending = expression.trimEnd().match(/^(.*\S)\s*[+−×÷*/^\-]\s*$/);
+    if (!pending || /\d[eE]$/.test(pending[1])) return null;
+    try { return evaluate(pending[1], angle, ans); }
+    catch { return null; }
+  }
+}
 export function evaluate(expression, angle = 'DEG', ans = 0) {
   const source = expression.replaceAll('×', '*').replaceAll('÷', '/').replaceAll('−', '-').replaceAll('π', 'pi');
   const tokens = source.match(/(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?|[a-zA-Z]+|[+\-*/^()%!]/g) || [];
@@ -74,8 +87,17 @@ export function evaluate(expression, angle = 'DEG', ans = 0) {
   }
   function multiply() {
     let left = unary();
-    while (peek() === '*' || peek() === '/') {
-      const op = take(), right = unary();
+    // Implicit multiplication has the same precedence as explicit * and /.
+    // Do not accept adjacent numeric tokens (e.g. 1.2.3) as multiplication.
+    const implicitProduct = () => {
+      const next = peek();
+      const previous = tokens[position - 1];
+      return next === '(' || /^(pi|e|ANS|sqrt|sin|cos|tan|asin|acos|atan|log|ln|abs)$/.test(next || '') ||
+        (/^[\d.]/.test(next || '') && /^(\)|!|%|pi|e|ANS)$/.test(previous || ''));
+    };
+    while (peek() === '*' || peek() === '/' || implicitProduct()) {
+      const op = peek() === '*' || peek() === '/' ? take() : '*';
+      const right = unary();
       if (op === '/' && right.value === 0) fail('Cannot divide by zero.');
       left = node(op === '*' ? left.value * right.value : left.value / right.value);
     }
