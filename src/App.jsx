@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { evaluate, formatResult, previewExpression } from './calculator.js';
-import { toggleSign } from './input.js';
+import { toggleSign, withinDigitLimit, stripGrouping, formatExpression } from './input.js';
 import Icon from './Icon.jsx';
+import ResultOutput from './ResultOutput.jsx';
 import UnitConverter from './UnitConverter.jsx';
 function read(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
@@ -41,6 +42,7 @@ export default function App() {
   const [angle, setAngle] = useSaved('calculator.angle', 'DEG');
   const [history, setHistory] = useSaved('calculator.history', []);
   const [expression, setExpression] = useState('');
+  const [editingExpression, setEditingExpression] = useState(false);
   const [result, setResult] = useState(0);
   const [ans, setAns] = useState(() => history[0]?.result ?? 0);
   const [completed, setCompleted] = useState(false);
@@ -58,7 +60,7 @@ export default function App() {
       setConverterValue(previous => {
         if (token === 'sign') return previous.startsWith('-') ? previous.slice(1) : '-' + previous;
         if (token === '.') return previous.includes('.') ? previous : (previous || '0') + '.';
-        if (/^[0-9]$/.test(token)) return previous === '0' ? token : previous + token;
+        if (/^[0-9]$/.test(token)) { const next = previous === '0' ? token : previous + token; return withinDigitLimit(next) ? next : previous; }
         return previous;
       });
       return;
@@ -77,6 +79,7 @@ export default function App() {
       }
       base += token;
     }
+    if (/^[0-9.]$/.test(token) && !withinDigitLimit(base)) { setError(korean ? '숫자는 최대 15자리까지 입력할 수 있어요.' : 'Use up to 15 digits per number.'); return; }
     setExpression(base); setCompleted(false);
   }
   function clear() { if (converterOpen) { setConverterValue(''); return; } setExpression(''); setResult(0); setCompleted(false); setError(''); }
@@ -118,11 +121,11 @@ export default function App() {
           <button className="theme-toggle" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`} aria-pressed={theme === 'dark'}><span className="theme-track"><Icon name={theme === 'dark' ? 'sunLight' : 'sun'} /><Icon name={theme === 'dark' ? 'moonDark' : 'moon'} /></span></button>
         </header>
         <div className="mode-row">{mode === 'Scientific' && <div className="angles" aria-label="Angle unit">{['DEG', 'RAD'].map(unit => <button key={unit} aria-pressed={angle === unit} onClick={() => setAngle(unit)}>{unit}</button>)}</div>}</div>
-        <div className={`display-region ${drawer ? 'history-open' : ''}`}><div className="display"><input aria-label="Expression" spellCheck="false" placeholder="0" value={expression} onChange={e => { setExpression(e.target.value); setCompleted(false); setError(''); }} onKeyDown={e => { if (e.key === 'Enter' || e.key === '=') { e.preventDefault(); calculate(); } if (e.key === 'Escape') clear(); }}/><output aria-live="polite">{visibleResult === null ? '…' : formatResult(visibleResult)}</output><div className="error" role="status">{error}</div></div>
+        <div className={`display-region ${drawer ? 'history-open' : ''}`}><div className="display"><input aria-label="Expression" spellCheck="false" placeholder="0" value={editingExpression ? expression : formatExpression(expression)} onFocus={() => setEditingExpression(true)} onBlur={() => setEditingExpression(false)} onChange={e => { const next = stripGrouping(e.target.value); if (!withinDigitLimit(next)) { setError(korean ? '숫자는 최대 15자리까지 입력할 수 있어요.' : 'Use up to 15 digits per number.'); return; } setExpression(next); setCompleted(false); setError(''); }} onKeyDown={e => { if (e.key === 'Enter' || e.key === '=') { e.preventDefault(); calculate(); } if (e.key === 'Escape') clear(); }}/><ResultOutput>{visibleResult === null ? '…' : formatResult(visibleResult)}</ResultOutput><div className="error" role="status">{error}</div></div>
                 <button className="drawer-tab" aria-label={drawer ? 'Close history' : 'Open history'} onClick={() => setDrawer(!drawer)}>{drawer ? '‹' : '›'}</button>
-        {drawer && <aside id="history" className="history" aria-label="Calculation history"><div className="history-list">{history.length ? history.map(entry => <button className="history-entry" key={entry.id} onClick={() => reuse(entry.result)}><span>{entry.expression}</span><strong>{formatResult(entry.result)}</strong><small>{entry.angle}</small></button>) : <p>Your calculations<br/>will appear here.</p>}</div><button className="clear-history" disabled={!history.length} onClick={() => setHistory([])}>{labels.clearHistory}</button></aside>}</div>
+        {drawer && <aside id="history" className="history" aria-label="Calculation history"><div className="history-list">{history.length ? history.map(entry => <button className="history-entry" key={entry.id} onClick={() => reuse(entry.result)}><span>{formatExpression(entry.expression)}</span><strong>{formatResult(entry.result)}</strong><small>{entry.angle}</small></button>) : <p>Your calculations<br/>will appear here.</p>}</div><button className="clear-history" disabled={!history.length} onClick={() => setHistory([])}>{labels.clearHistory}</button></aside>}</div>
         <nav className="toolbar" aria-label="Calculator utilities"><button aria-label={korean ? "단위 변환" : "Unit converter"} aria-expanded={converterOpen} aria-controls="unit-converter" onClick={() => { setConverterOpen(!converterOpen); setMode('Standard'); setDrawer(false); }}><Icon name="ruler" /></button><button className="scientific-toggle" aria-label="Scientific mode" title={mode === 'Scientific' ? 'Switch to Standard' : 'Switch to Scientific'} aria-pressed={mode === 'Scientific'} onClick={() => { setMode(mode === 'Scientific' ? 'Standard' : 'Scientific'); setConverterOpen(false); }}><Icon name="scientific" /></button><button disabled={visibleResult === null} className="copy-button" data-copied={copyStatus === labels.copied} aria-label="Copy result" onClick={copy}><Icon name="copy" /></button><span role="status">{copyStatus}</span><button aria-label="Backspace" onClick={backspace}><Icon name="backspace" /></button></nav>
-        <div hidden={!converterOpen}><UnitConverter value={converterValue} onChange={setConverterValue} korean={korean} onUse={value => { reuse(value); setConverterOpen(false); }} /></div>
+        <div hidden={!converterOpen}><UnitConverter value={converterValue} onChange={value => { const next = stripGrouping(value); if (withinDigitLimit(next)) setConverterValue(next); }} korean={korean} onUse={value => { reuse(value); setConverterOpen(false); }} /></div>
         <div className="keyboards">
           {mode === 'Scientific' && <div className="science-grid"><button className="key science secondary-toggle" aria-label={korean ? "보조 함수" : "Secondary functions"} aria-pressed={secondary} onClick={() => setSecondary(!secondary)}>2nd</button><button className="key science angle-toggle" aria-label={korean ? '각도 단위 전환' : 'Toggle angle unit'} onClick={() => setAngle(angle === 'DEG' ? 'RAD' : 'DEG')}>{angle}</button><Key kind="science" onClick={() => input('ANS')} label="Insert last answer">ANS</Key>{scientificPages[secondary ? 1 : 0].map(([label, token]) => <Key key={label} kind="science" onClick={() => input(token)}>{label}</Key>)}</div>}
           <div className="standard-grid"><Key kind="utility" onClick={clear} label="All clear">AC</Key><Key kind="utility" onClick={() => input('sign')} label="Toggle sign">+/−</Key><Key kind="utility" onClick={() => input('%')} label="Percent">%</Key><Key kind="operator" onClick={() => input('÷')} label="Divide">÷</Key>

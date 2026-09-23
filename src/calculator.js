@@ -4,7 +4,11 @@ const fail = (message) => { throw new Error(message); };
 const checked = (value) => Number.isFinite(value) ? value : fail('Result is too large.');
 export function formatResult(value) {
   if (Object.is(value, -0)) return '0';
-  return Number(value.toPrecision(12)).toString();
+  const rounded = Number(value.toPrecision(15));
+  if (Math.abs(rounded) >= 1e15 || (rounded !== 0 && Math.abs(rounded) < 1e-9)) {
+    return rounded.toExponential(10).replace(/\.?0+e/, 'e');
+  }
+  return rounded.toLocaleString('en-US', { maximumSignificantDigits: 15 });
 }
 // Preview never commits an answer or history entry. null means not yet valid.
 export function previewExpression(expression, angle = 'DEG', ans = 0) {

@@ -23,7 +23,20 @@ test('live preview uses angle and last committed answer', () => {
   assert.equal(previewExpression('ANS+2', 'DEG', 5), 7);
   assert.equal(previewExpression('sin(π/2)', 'RAD'), 1);
 });
-import { toggleSign } from './input.js';
+import { toggleSign, withinDigitLimit, formatExpression, stripGrouping } from './input.js';
+test('grouped numbers and 15-digit limits', () => {
+  assert.equal(formatResult(1234567.89), '1,234,567.89');
+  assert.equal(formatResult(999999999999999), '999,999,999,999,999');
+  assert.equal(formatResult(1e15), '1e+15');
+  assert.equal(formatResult(1e-12), '1e-12');
+  assert.equal(formatExpression('12345.60+(−9876)'), '12,345.60+(−9,876)');
+  assert.equal(stripGrouping('12,345+6,789'), '12345+6789');
+  assert.ok(withinDigitLimit('123456789012345+123456789012345'));
+  assert.ok(!withinDigitLimit('1234567890123456'));
+  assert.ok(!withinDigitLimit('0.123456789012345'));
+  assert.ok(withinDigitLimit('1e-12'));
+  assert.equal(evaluate('1/3') * 3, 1);
+});
 test('sign toggles the last number and closes its parentheses', () => {
   assert.equal(toggleSign('458'), '(−458)');
   assert.equal(toggleSign('25+111'), '25+(−111)');

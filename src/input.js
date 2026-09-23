@@ -1,3 +1,18 @@
+export function stripGrouping(expression) { return expression.replaceAll(',', ''); }
+
+export function withinDigitLimit(expression) {
+  const numbers = stripGrouping(expression).match(/(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?/g) || [];
+  return numbers.every(number => (number.match(/\d/g) || []).length <= 15);
+}
+
+export function formatExpression(expression) {
+  return stripGrouping(expression).replace(/(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?/g, number => {
+    if (/[eE]/.test(number)) return number;
+    const [integer, fraction] = number.split('.');
+    return integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (fraction === undefined ? '' : '.' + fraction);
+  });
+}
+
 // Toggle the final operand; keep the rest of a chained expression intact.
 export function toggleSign(expression) {
   const source = expression.trimEnd();

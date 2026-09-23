@@ -408,3 +408,14 @@ html.native-app .calculator.scientific.expanded .science-grid .key {
 html.native-app .calculator.scientific.expanded .science-grid .key { font-size: 17px; }
 .calculator .converter input, .calculator .converter select { font-size: 18px; }
 .calculator .converter output { font-size: 26px; }
+
+/* Long numbers scroll inside their display, never widen the calculator. */
+.app-wrap, .calculator, .display-region, .display { min-width: 0; }
+.calculator .display-region .display output { width: 100%; max-width: 100%; }
+.history-entry { min-width: 0; }
+.history-entry strong, .history-entry span { max-width: 100%; overflow-wrap: anywhere; }
+
+.calculator .display-region .display .fitted-result {
+  overflow: hidden; text-align: right;
+}
+.fitted-result > span { display: inline-block; white-space: nowrap; max-width: 100%; }
